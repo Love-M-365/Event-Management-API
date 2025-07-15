@@ -109,7 +109,7 @@ Response:
 ```
 
 #### 🔗 Register for Event
-`POST /api/users/register`
+`POST /api/events/register`
 
 ```json
 Request:
@@ -125,7 +125,7 @@ Response:
 ```
 
 #### ❌ Cancel Registration
-`POST /api/users/cancel`
+`POST /api/events/cancel`
 
 ```json
 Request:
