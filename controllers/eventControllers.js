@@ -90,22 +90,25 @@ exports.cancelRegistration = async (req, res) => {
   res.json({ message: "Registration cancelled" });
 };
 
-
 exports.listUpcomingEvents = async (req, res) => {
-  const now = new Date();
+  try {
+    const result = await pool.query(
+      `
+      SELECT * FROM events
+      WHERE datetime > NOW()
+      ORDER BY datetime ASC, location ASC
+      `
+    );
 
-  const result = await pool.query(
-    `SELECT * FROM events WHERE datetime > $1`,
-    [now]
-  );
+    if (result.rows.length === 0) {
+      return res.status(200).json({ message: "No upcoming events." });
+    }
 
-  const sorted = result.rows.sort((a, b) => {
-    const dateComp = new Date(a.datetime) - new Date(b.datetime);
-    if (dateComp !== 0) return dateComp;
-    return a.location.localeCompare(b.location);
-  });
-
-  res.json(sorted);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching upcoming events:", err);
+    res.status(500).json({ message: "Failed to fetch upcoming events." });
+  }
 };
 
 
